@@ -1,0 +1,96 @@
+# Añadir al path las rutas C:\xampp\mysql\bin y C:\xampp\php
+cd C:\xampp\htdocs\wptest
+$Pregunta= Read-Host "¿Quieres un movil?"
+ 
+if("Si" -eq $Pregunta )
+{
+$Pregunta2= Read-Host "¿Quieres Samsung o Iphone?"
+if("Samsung" -eq $Pregunta2 )
+{
+$var = "Samsung"
+cd C:\xampp\htdocs\wptest
+foreach($usuarios in $var)
+{
+    $usuarios
+    New-Item -ItemType Directory -Name $usuarios -Force
+    cd C:\xampp\htdocs\wptest\$usuarios
+    php.exe C:\xampp\php\wp-cli.phar core download
+    php.exe C:\xampp\php\wp-cli.phar config create --dbname=$usuarios --dbuser=root
+    # Una vez creado el fichero wp-config.php con el comando wp config create --dbname=wptest --dbuser=miusuario --dbpass=miclave --locale=es_ES
+    # Crea la base de datos con la estructura de WordPress
+    php.exe C:\xampp\php\wp-cli.phar db create
+    php.exe C:\xampp\php\wp-cli.phar core install --url=localhost/wptest/$usuarios --title="Este es el sitio de usuario" --admin_user="mi_usuario" --admin_password="mi_contraseña" --admin_email=mi@email.com 
+    
+}
+ 
+$url1="https://www.pccomponentes.com/smartphone-moviles-samsung"
+$resultado= Invoke-WebRequest $url1
+$nombre = $resultado.AllElements | Where Class -eq “GTM-productClick enlace-superpuesto” | %{$_."data-name"}
+$precio =$resultado.AllElements | Where Class -eq “GTM-productClick enlace-superpuesto” | %{$_."data-price"}
+$link =$resultado.AllElements | Where Class -eq “GTM-productClick enlace-superpuesto” | %{$_.href}
+$nombre > nombre.txt
+$precio > precio.txt
+$link > link.txt
+$contenido1= Get-Content nombre.txt 
+$contenido2= Get-Content  precio.txt
+$contenido3= Get-Content  link.txt
+
+for($i=0;$i -le $contenido1.Length;$i=$i+1)
+{
+   $contenido= $contenido1[$i] 
+   $contenidos= $contenido2[$i]
+   $contenidox= $contenido3[$i]
+   php.exe C:\xampp\php\wp-cli.phar post create --post_title="$contenido" --post_content="<div style="background-color:aqua"><li><strong>$contenido</strong></li><li><strong>$contenidos€</strong></li><li><a href="https://www.pccomponentes.com$contenidox"><strong>"Pagina_Web"</strong></a></li></div>" --post_type="post" --menu_order=7
+}
+$web="http://localhost/wptest/Samsung/wp-admin/edit.php"
+Start-Process chrome $web 
+cd C:\xampp\htdocs\wptest
+}
+}
+if("Iphone" -eq $Pregunta2 )
+{
+$var = "Iphone"
+cd C:\xampp\htdocs\wptest
+foreach($usuarios in $var)
+{
+    $usuarios
+    New-Item -ItemType Directory -Name $usuarios -Force
+    cd C:\xampp\htdocs\wptest\$usuarios
+    php.exe C:\xampp\php\wp-cli.phar core download
+    php.exe C:\xampp\php\wp-cli.phar config create --dbname=$usuarios --dbuser=root
+    # Una vez creado el fichero wp-config.php con el comando wp config create --dbname=wptest --dbuser=miusuario --dbpass=miclave --locale=es_ES
+    # Crea la base de datos con la estructura de WordPress
+    php.exe C:\xampp\php\wp-cli.phar db create
+    php.exe C:\xampp\php\wp-cli.phar core install --url=localhost/wptest/$usuarios --title="Este es el sitio de usuario" --admin_user="mi_usuario" --admin_password="mi_contraseña" --admin_email=mi@email.com 
+    
+}
+ 
+$url1="https://www.pccomponentes.com/iphone"
+$resultado= Invoke-WebRequest $url1
+$descuento1 = $resultado.AllElements | Where Class -eq “GTM-productClick enlace-superpuesto” | %{$_."data-name"}
+$descuento2 =$resultado.AllElements | Where Class -eq “GTM-productClick enlace-superpuesto” | %{$_."data-price"}
+$link1 =$resultado.AllElements | Where Class -eq “GTM-productClick enlace-superpuesto” | %{$_.href}
+$descuento1 > resultado2.txt
+$descuento2 > resutado3.txt
+$link1 > resultado4.txt
+$contenido1= Get-Content resultado2.txt 
+$contenido2= Get-Content  resutado3.txt
+$contenido3= Get-Content resultado4.txt
+for($i=0;$i -le $contenido1.Length;$i=$i+1)
+{
+   $contenidoi= $contenido1[$i] 
+   $contenidoh= $contenido2[$i]
+   $contenidop= $contenido3[$i]
+   php.exe C:\xampp\php\wp-cli.phar post create --post_title="$contenidoi" --post_content="<div style="background-color:silver"><li><strong>$contenidoi</strong></li><li><strong>$contenidoh€</strong></li><li><a href="https://www.pccomponentes.com$contenidop"><strong>"Pagina_Web"</strong></a></li></div>" --post_type="post" --menu_order=7
+}
+  $web="http://localhost/wptest/Iphone/wp-admin/edit.php"
+  Start-Process chrome $web  
+  cd C:\xampp\htdocs\wptest 
+}
+
+else{
+echo "Perdon por las molestias"
+}
+
+
+
