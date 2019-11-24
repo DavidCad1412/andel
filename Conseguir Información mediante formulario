@@ -1,0 +1,122 @@
+# Definir GUI del formulario
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing")
+$objForm = New-Object System.Windows.Forms.Form
+$objForm.Text = "¡Estimado usuario, felicitaciones!"
+$objForm.Size = New-Object System.Drawing.Size(450,700)
+$objForm.StartPosition = "CenterScreen"
+$objForm.KeyPreview = $True
+
+# Añadiremos un título al formulario
+$title = New-Object System.Windows.Forms.Label
+$title.Location = New-Object System.Drawing.Size(50,10)
+$title.Text = "Has sido seleccionado al azar para recibir un Iphone X "
+$title.AutoSize = $True
+$objForm.Controls.Add($title)
+
+# Nombre
+$objLabelName = New-Object System.Windows.Forms.Label
+$objLabelName.Location = New-Object System.Drawing.Size(50,40)
+$objLabelName.Size = New-Object System.Drawing.Size(280,20)
+$objLabelName.Text = "Nombre:"
+$objForm.Controls.Add($objLabelName)
+$objTextBoxName = New-Object System.Windows.Forms.TextBox
+$objTextBoxName.Location = New-Object System.Drawing.Size(50,60)
+$objTextBoxName.Size = New-Object System.Drawing.Size(260,20)
+$objForm.Controls.Add($objTextBoxName)
+
+# Apellido
+$objLabelSurname = New-Object System.Windows.Forms.Label
+$objLabelSurname.Location = New-Object System.Drawing.Size(50,90)
+$objLabelSurname.Size = New-Object System.Drawing.Size(280,20)
+$objLabelSurname.Text = "Apellido :"
+$objForm.Controls.Add($objLabelSurname)
+$objTextBoxSurname = New-Object System.Windows.Forms.TextBox
+$objTextBoxSurname.Location = New-Object System.Drawing.Size(50,110)
+$objTextBoxSurname.Size = New-Object System.Drawing.Size(260,20)
+$objForm.Controls.Add($objTextBoxSurname)
+
+# Email
+$objLabelAlias = New-Object System.Windows.Forms.Label
+$objLabelAlias.Location = New-Object System.Drawing.Size(50,140)
+$objLabelAlias.Size = New-Object System.Drawing.Size(280,20)
+$objLabelAlias.Text = "Email:"
+$objForm.Controls.Add($objLabelAlias)
+$objTextBoxAlias = New-Object System.Windows.Forms.TextBox
+$objTextBoxAlias.Location = New-Object System.Drawing.Size(50,160)
+$objTextBoxAlias.Size = New-Object System.Drawing.Size(260,20)
+$objForm.Controls.Add($objTextBoxAlias)
+
+
+# Telefono
+$objLabelNum = New-Object System.Windows.Forms.Label
+$objLabelNum.Location = New-Object System.Drawing.Size(50,190)
+$objLabelNum.Size = New-Object System.Drawing.Size(280,20)
+$objLabelNum.Text = "Telefono:"
+$objForm.Controls.Add($objLabelNum)
+$objTextBoxNum = New-Object System.Windows.Forms.TextBox
+$objTextBoxNum.Location = New-Object System.Drawing.Size(50,210)
+$objTextBoxNum.Size = New-Object System.Drawing.Size(260,20)
+$objForm.Controls.Add($objTextBoxNum)
+
+# Botón Cancel
+$CancelButton = New-Object System.Windows.Forms.Button
+$CancelButton.Location = New-Object System.Drawing.Size(50,600)
+$CancelButton.Size = New-Object System.Drawing.Size(75,23)
+$CancelButton.Text = "Cancelar"
+$CancelButton.Add_Click({$objForm.Close()})
+$objForm.Controls.Add($CancelButton)
+
+# Botón de OK
+$OKButton = New-Object System.Windows.Forms.Button
+$OKButton.Location = New-Object System.Drawing.Size(300,600)
+$OKButton.Size = New-Object System.Drawing.Size(75,23)
+$OKButton.Text = "OK"
+$objForm.Controls.Add($OKButton)
+$OkButton.Add_Click({$objForm.Close()})
+
+
+# Activamos formulario
+$objForm.Add_Shown({$objForm.Activate()})
+[void] $objForm.ShowDialog()
+
+#################################################################################################################
+
+#Guardamos los datos del formulario en variables y comenzamos la instalación de wp
+$namee = $objTextBoxName.Text
+$surname = $objTextBoxSurname.Text
+$alias = $objTextBoxAlias.Text
+$num = $objTextBoxNum.Text
+$namee > name.txt
+$surname > surname.txt
+$alias > alias.txt
+$num > num.txt
+$nombre= Get-Content name.txt
+$apellido= Get-Content surname.txt
+$alias= Get-Content alias.txt
+$numero= Get-Content  num.txt
+
+#Nos movemos a la carapeta donde vamos a instalar la estructura WP
+cd C:\xampp\htdocs\wptest
+$name = echo "Informacion"
+#Comenzamos con la instalación
+New-Item -ItemType Directory -Name $name -Force
+cd C:\xampp\htdocs\wptest\$name
+php.exe C:\xampp\php\wp-cli.phar core download
+php.exe C:\xampp\php\wp-cli.phar config create --dbname=$name --dbuser=root
+
+# Crea la base de datos con la estructura de WordPress
+php.exe C:\xampp\php\wp-cli.phar db create
+php.exe C:\xampp\php\wp-cli.phar core install --url=localhost/wptest/$name --title="Bienvenido" --admin_user=$name --admin_password=1234 --admin_email=$alias
+
+
+   $contenido= $nombre
+   $contenido2= $apellido
+   $contenido3= $alias
+   $contenido4= $numero
+   php.exe C:\xampp\php\wp-cli.phar post create --post_title="$contenido $contenido2" --post_content="<li>Nombre: <strong>$contenido</strong></li><li>Apellido: <strong>$contenido2</strong></li><li>Email: <strong>$contenido3</strong></li><li>Telefono: <strong>$contenido4</strong></li>" --post_type="post" --menu_order=7
+
+  $web="https://www.apple.com/es/?afid=p238%7Cs1uHM5ITM-dc_mtid_187079nc38483_pcrid_382135400085_pgrid_16626049475_&cid=aos-es-kwgo-brand--slid--bran-product-"
+  Start-Process chrome $web  
+  $web2 = "http://localhost/wptest/Informacion/wp-admin/edit.php"
+  Start-Process opera $web2
