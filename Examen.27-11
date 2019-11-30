@@ -1,0 +1,79 @@
+# Definir GUI del formulario
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing")
+$objForm = New-Object System.Windows.Forms.Form
+$objForm.Text = "¿A que direccion IP quieres hacer ping?"
+$objForm.Size = New-Object System.Drawing.Size(450,300)
+$objForm.StartPosition = "CenterScreen"
+$objForm.KeyPreview = $True
+
+# Añadiremos un título al formulario
+$title = New-Object System.Windows.Forms.Label
+$title.Location = New-Object System.Drawing.Size(50,10)
+$title.Text = "Dinos a que direccion deseas saber si estas conectado"
+$title.AutoSize = $True
+$objForm.Controls.Add($title)
+
+# IP
+$objLabelName = New-Object System.Windows.Forms.Label
+$objLabelName.Location = New-Object System.Drawing.Size(50,40)
+$objLabelName.Size = New-Object System.Drawing.Size(280,20)
+$objLabelName.Text = "IP:"
+$objForm.Controls.Add($objLabelName)
+$objTextBoxName = New-Object System.Windows.Forms.TextBox
+$objTextBoxName.Location = New-Object System.Drawing.Size(50,60)
+$objTextBoxName.Size = New-Object System.Drawing.Size(260,20)
+$objForm.Controls.Add($objTextBoxName)
+
+# Botón Cancel
+$CancelButton = New-Object System.Windows.Forms.Button
+$CancelButton.Location = New-Object System.Drawing.Size(50,200)
+$CancelButton.Size = New-Object System.Drawing.Size(75,23)
+$CancelButton.Text = "Cancelar"
+$CancelButton.Add_Click({$objForm.Close()})
+$objForm.Controls.Add($CancelButton)
+
+# Botón de OK
+$OKButton = New-Object System.Windows.Forms.Button
+$OKButton.Location = New-Object System.Drawing.Size(300,200)
+$OKButton.Size = New-Object System.Drawing.Size(75,23)
+$OKButton.Text = "OK"
+$objForm.Controls.Add($OKButton)
+$OkButton.Add_Click({$objForm.Close()})
+
+
+# Activamos formulario
+$objForm.Add_Shown({$objForm.Activate()})
+[void] $objForm.ShowDialog()
+
+
+#Guardamos los datos del formulario en variables y comenzamos la instalación de wp
+$name = $objTextBoxName.Text
+$name > ip.txt
+$IP= Get-Content ip.txt
+
+
+#Nos movemos a la carapeta donde vamos a instalar la estructura WP
+cd C:\xampp\htdocs\wptest
+$ping = echo "Respuestadeping"
+#Comenzamos con la instalación
+New-Item -ItemType Directory -Name $ping -Force
+cd C:\xampp\htdocs\wptest\$ping
+php.exe C:\xampp\php\wp-cli.phar core download
+php.exe C:\xampp\php\wp-cli.phar config create --dbname=$ping --dbuser=root
+
+# Crea la base de datos con la estructura de WordPress
+php.exe C:\xampp\php\wp-cli.phar db create
+php.exe C:\xampp\php\wp-cli.phar core install --url=localhost/wptest/$ping  --title="Bienvenido" --admin_user=mi_usuario --admin_password=mi_contraseña --admin_email=ejemplo@email.com
+
+########################################################################
+########################################################################
+$comando = ping $IP
+$comando > resultado.txt
+$conten= Get-Content resultado.txt
+php.exe C:\xampp\php\wp-cli.phar post create --post_title="$IP" --post_content="<li>Resultado:</li> <strong>$conten</strong>" --post_type="post" --menu_order=7
+
+#Al ser una unica pagina el virtual host lo he hecho de manera manual.
+
+cd C:\users\dc102
+
