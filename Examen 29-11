@@ -1,0 +1,70 @@
+#Escuchar y mostrar desde el windows server los mensajes recibidos del ubuntu
+#Server
+$ip=[IPAddress]"0.0.0.0"
+$TcpListener=New-Object System.Net.Sockets.TcpListener (New-Object System.Net.IPEndPoint($ip,"2052"))
+$TcpListener.Start()
+ 
+while($true)
+{
+$elemento=(New-Object System.IO.StreamReader ($TcpListener.AcceptTcpClient().GetStream())).ReadLine()
+$elemento
+
+}
+$TcpListener.Stop()
+
+##################################################################################################
+#El comando anterior utilizando la informacion enviado por el ubuntu para crear usuarios o grupos 
+$ip=[IPAddress]"0.0.0.0"
+$TcpListener=New-Object System.Net.Sockets.TcpListener (New-Object System.Net.IPEndPoint($ip,"2052"))
+$TcpListener.Start()
+ 
+while($true)
+{
+$elemento=(New-Object System.IO.StreamReader ($TcpListener.AcceptTcpClient().GetStream())).ReadLine()
+    if($elemento.split(",")[0] -eq 1)
+    {
+        "crear ou ->" + $elemento.split(",")[1]
+        New-LocalGroup -Name $elemento.split(",")[1] 
+    }
+        if($elemento.split(",")[0] -eq 2)
+    {
+        "crear user ->" + $elemento.split(",")[1]
+        New-LocalUser -Name  $elemento.split(",")[1] 
+}
+}
+
+$TcpListener.Stop()
+
+##################################################################################################
+#Guardar la informacion enviada por el ubuntu en un fichero, utilizar ese fichero para crear usuarios y grupos
+$ip=[IPAddress]"0.0.0.0"
+$TcpListener=New-Object System.Net.Sockets.TcpListener (New-Object System.Net.IPEndPoint($ip,"2052"))
+$TcpListener.Start()
+ 
+while($true)
+{
+$elemento=(New-Object System.IO.StreamReader ($TcpListener.AcceptTcpClient().GetStream())).ReadLine() 
+$elemento >> fichero.txt
+}
+
+$TcpListener.Stop()
+
+foreach ($elemento in Get-Content .\fichero.txt)
+{
+    if($elemento.split(",")[0] -eq 1)
+    {
+        "crear ou ->" + $elemento.split(",")[1]
+        New-LocalGroup -Name $elemento.split(",")[1] 
+    }
+        if($elemento.split(",")[0] -eq 2)
+    {
+        "crear user ->" + $elemento.split(",")[1]
+        New-LocalUser -Name  $elemento.split(",")[1] 
+}
+}
+##################################################################################################
+#Enviar un archivo del ubuntu al windows server (fallo ourrido "el acceso al destino esta denegado" pruebas con diferentes ubuntus)
+Get-SCPFile -ComputerName '10.202.0.198' -Port 25522 -RemoteFile '/home/david/Documents/user.txt' -LocalFile 'C:\Users\Administrador\Documents\power'
+
+##################################################################################################
+
