@@ -1,0 +1,52 @@
+echo "Contraseña no Segura"
+
+}
+
+else{
+echo "Contraseña Segura"
+
+#La clave para cifrar tiene que ser correcta en tipo System.Byte
+#ConvertFrom-SecureString : No se puede enlazar el parámetro 'Key'. No se puede convertir el valor "Some secret key" al tipo "System.Byte". Error: "La cadena de entrada no tiene el formato correcto."
+ $clave2 > contraseñaaceptada.txt
+ $clave = Get-Content contraseñaaceptada.txt
+$clavebyte=[Byte[]]($clave.PadRight(24).Substring(0,24).ToCharArray())
+ 
+$cadenacifrada=$cadena | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString -Key $clavebyte
+$cadenacifrada > Infor.txt
+}
+
+start Infor.txt
+
+#################################################
+#################################################
+(Get-FileHash  Infor.txt).hash >  ficheroint.txt
+
+
+if((Get-Content ficheroint.txt) -eq (Get-FileHash  Infor.txt).hash){
+
+        [System.Windows.MessageBox]::Show('El fichero es integro','Correcto')
+        $clave = Get-Content contraseñaaceptada.txt
+ 
+        #La clave para cifrar tiene que ser correcta en tipo System.Byte
+        $clavebyte=[Byte[]]($clave.PadRight(24).Substring(0,24).ToCharArray())
+        $cadenacifrada1 = Get-Content Infor.txt
+        $cadenadescifrando = $cadenacifrada1 | ConvertTo-SecureString -Key $clavebyte
+        $cadenadescifrando > Infor.txt
+
+        $credencial = New-Object -TypeName System.Management.Automation.PSCredential('clave123', $cadenadescifrando)
+        $cadenadescrifrada = $credencial.GetNetworkCredential().Password
+        $cadenadescrifrada > Infor.txt
+  
+
+}else{
+
+        [System.Windows.MessageBox]::Show('Hash no coincide, fichero comprometido','Aviso')
+        Remove-Item -Path "C:\Users\dc102\Info\Infor.txt"   
+}
+
+start Infor.txt
+
+#################################################
+#################################################
+
+
