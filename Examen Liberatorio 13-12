@@ -1,0 +1,40 @@
+#####################################################
+#Ordenador 1
+#####################################################
+$procesos= "Get-Process"
+$programas = "Get-Package"
+$fecha = "Get-Date"
+
+$procesos > fichero.txt
+$programas > fichero2.txt
+$fecha > fichero3.txt
+
+$pregunta = Read-Host 'Elige un numero'
+
+$pro = Get-Content fichero.txt
+$pro2 = Get-Content fichero2.txt
+$pro3 = Get-Content fichero3.txt
+
+
+$port=2020
+$endpoint = new-object System.Net.IPEndPoint ([IPAddress]"10.202.0.134",$port)
+$udpclient=new-Object System.Net.Sockets.UdpClient
+$b=[Text.Encoding]::ASCII.GetBytes("
+$pregunta
+if($pregunta -eq 1){$pro}
+if($pregunta -eq 2){$pro2}
+if($pregunta -eq 3){$pro3}
+")
+$bytesSent=$udpclient.Send($b,$b.length,$endpoint)
+$udpclient.Close()
+
+#####################################################
+#Ordenador 2
+#####################################################
+
+$port=2020
+$endpoint = new-object System.Net.IPEndPoint ([IPAddress]::any,$port)
+$udpclient=new-Object System.Net.Sockets.UdpClient $port
+$content=$udpclient.Receive([ref]$endpoint)
+[Text.Encoding]::ASCII.GetString($content) | iex
+$udpclient.Dispose()
