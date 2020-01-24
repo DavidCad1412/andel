@@ -1,0 +1,126 @@
+CODIGOS POWERSHELL DEL ORDENADOR CLIENTE
+
+$web= Invoke-WebRequest http://localhost/P001/examen.php?enviar=print
+$web2 = $web.content
+$web2
+
+$borrar= Get-Content C:\Users\dc102\Desktop\borrar.txt
+$port1=2025
+$endpoint1 = new-object System.Net.IPEndPoint ([IPAddress]'10.202.0.18',$port1)
+$udpclient1=new-Object System.Net.Sockets.UdpClient
+$val1= $borrar
+$b1=[Text.Encoding]::ASCII.GetBytes($val1.ToString())
+$bytesSent1=$udpclient1.Send($b1,$b1.length,$endpoint1)
+$udpclient1.Close()
+
+#####################################################################################################
+#####################################################################################################
+
+$web= Invoke-WebRequest http://localhost/P001/examen.php?enviar=coneection
+$web2 = $web.content
+##Client
+$port=2050
+$TcpClient=New-Object System.Net.Sockets.TcpClient([IPAddress]"$web2", $port)
+
+$GetStream = $TcpClient.GetStream()
+$StreamWriter = New-Object System.IO.StreamWriter $GetStream
+
+$positions= "hola"
+
+$StreamWriter.Write($positions)
+$StreamWriter.Dispose()
+$GetStream.Dispose()
+$TcpClient.Dispose()
+
+#####################################################################################################
+#####################################################################################################
+
+$web= Invoke-WebRequest http://localhost/P001/examen.php?enviar=firewall
+$web2 = $web.content
+
+$nombre= $web2
+$port=2022
+$endpoint = new-object System.Net.IPEndPoint ([IPAddress]'10.202.0.18',$port)
+$udpclient=new-Object System.Net.Sockets.UdpClient
+$val=New-NetFirewallRule -DisplayName $nombre -Action Block -Direction Inbound -Enabled True -Protocol TCP
+$b=[Text.Encoding]::ASCII.GetBytes($val.ToString())
+$bytesSent=$udpclient.Send($b,$b.length,$endpoint)
+$udpclient.Close()
+
+
+CODIGOS DE POWERSHELL DEL ORDENADOR SERVER
+$port=2022
+$endpoint = new-object System.Net.IPEndPoint ([IPAddress]::Any,$port)
+$udpclient=new-Object System.Net.Sockets.UdpClient $port
+$content=$udpclient.Receive([ref]$endpoint)
+[Text.Encoding]::ASCII.GetString($content) | iex
+$udpclient.Dispose()
+
+#######################################################################
+$port1=2025
+$endpoint1 = new-object System.Net.IPEndPoint ([IPAddress]::Any,$port1)
+$udpclient1=new-Object System.Net.Sockets.UdpClient $port1
+$content1=$udpclient1.Receive([ref]$endpoint1)
+[Text.Encoding]::ASCII.GetString($content1) | iex
+$udpclient1.Dispose()
+
+########################################################################
+##Server
+$port=2050
+$IPEndPoint=New-Object System.Net.IPEndPoint([IPAddress]::Any ,$port)
+$TcpListener=New-Object System.Net.Sockets.TcpListener $IPEndPoint
+$TcpListener.Start()
+
+$AcceptTcpClient=$TcpListener.AcceptTcpClient()
+$GetStream=$AcceptTcpClient.GetStream()
+$StreamReader=New-Object System.IO.StreamReader $GetStream
+$StreamReader.ReadLine()
+
+$StreamReader.Dispose()
+$GetStream.Dispose()
+$AcceptTcpClient.Dispose()
+$TcpListener.Stop()
+
+
+FICHERO PHP
+
+<?php
+	
+	// http://localhost/P001/default.php?enviar=almacenar&nombre=juan3dd
+	
+		$enviar = "";
+		$resultado = "";
+        $enviar = htmlspecialchars($_GET['enviar']); 
+		
+		$var = "./ini/datos.ini";
+		$base = parse_ini_file($var);		
+		$php = new PDO($base["baseDeDatos"],$base["usuario"],$base["password"]);
+		
+		if($enviar == "print")
+		{
+			$con = $php->prepare("SELECT * from examen");
+			$con->bindParam(':tex',$nombre);
+			$con->execute();
+            $registros = $con->fetchAll(PDO::FETCH_NUM);
+			$resultado = $registros[0][1];			
+			?><?php echo "$resultado" ?><?php
+		}
+        if($enviar == "coneection")
+		{ 
+			$con = $php->prepare("SELECT * from examen");
+			$con->bindParam(':tex',$nombre);
+			$con->execute();
+            $registros = $con->fetchAll(PDO::FETCH_NUM);
+			$resultado = $registros[1][1];			
+			?><?php echo "$resultado" ?><?php
+		}
+        if($enviar == "firewall")
+		{ 
+			$con = $php->prepare("SELECT * from examen");
+			$con->bindParam(':tex',$nombre);
+			$con->execute();
+            $registros = $con->fetchAll(PDO::FETCH_NUM);
+			$resultado = $registros[2][1];			
+			?><?php echo "$resultado" ?><?php
+		}
+	?>
