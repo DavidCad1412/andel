@@ -1,0 +1,70 @@
+##################################################
+##################################################
+##########ELIMINAR COLA IMPRESION#################
+
+$web= Invoke-WebRequest http://localhost/P001/examen.php?8453d14195369bf714ca346c1662411205bd7de257928d9a49934dca6f3841211f7ce53cf8e24e56c88c29d5a0640c0a0c232d2389186304b94a07aa515cdac3=06460743cfd9c7f3c8ca1c85298f53645b50feb10d09bcd0ead7c494ec7d11c477c83ad8ab9d1c0345c0e3ff3637954f2cc139f34c8b4b9ccb49a92ca3ad77a5
+$web2 = $web.content
+$web6= echo "'$web2KB'"
+$trabajo= echo '$trabajos'
+$port=2022
+$endpoint = new-object System.Net.IPEndPoint ([IPAddress]'10.202.0.18',$port)
+$udpclient=new-Object System.Net.Sockets.UdpClient
+$val= "foreach($trabajo in Get-PrintJob  -PrinterName 'Microsoft XPS Class Driver'){
+    if($trabajo.Size -gt $web6)
+    {
+        if($trabajo.UserName -EQ 'administrador')
+        {
+            'ES MAYOR, LO ELIMINO'
+            $trabajo.Id
+            Remove-PrintJob -ID $trabajo.Id -PrinterName 'Microsoft XPS Class Driver'
+        }
+    }
+}
+"
+$b=[Text.Encoding]::ASCII.GetBytes($val.ToString())
+$bytesSent=$udpclient.Send($b,$b.length,$endpoint)
+$udpclient.Close()
+
+##################################################
+##################################################
+#################CONEXION IP######################
+
+$web1= Invoke-WebRequest http://localhost/P001/examen.php?8453d14195369bf714ca346c1662411205bd7de257928d9a49934dca6f3841211f7ce53cf8e24e56c88c29d5a0640c0a0c232d2389186304b94a07aa515cdac3=9522ad491ba7a84820dad25ef3a5205903447abb420698c079a412f5f81dffdee37f3305e095225ff5bb50820ad1df78e0bddfaf97f4c3362047a3be1dcca503
+$web2 = $web1.content
+$web2
+##Client
+$port=2022
+$endpoint = new-object System.Net.IPEndPoint ([IPAddress]'web2',$port)
+$udpclient=new-Object System.Net.Sockets.UdpClient
+$val='echo "hola"'
+$b=[Text.Encoding]::ASCII.GetBytes($val.ToString())
+$bytesSent=$udpclient.Send($b,$b.length,$endpoint)
+$udpclient.Close()
+
+##################################################
+##################################################
+############CREAR REGLA FIREWALL##################
+
+$web11= Invoke-WebRequest http://localhost/P001/examen.php?8453d14195369bf714ca346c1662411205bd7de257928d9a49934dca6f3841211f7ce53cf8e24e56c88c29d5a0640c0a0c232d2389186304b94a07aa515cdac3=ec9be2505b527c8607c467745efe1ebf9baf126ee5f53c5aaa93fcc0be72d79fed197fd94615a254f4769b3a92c8abca7faca28f81e0e2d87b8809462098e0c4
+$web2 = $web11.content
+$web2
+
+$nombre= $web2
+$port=2022
+$endpoint = new-object System.Net.IPEndPoint ([IPAddress]'10.202.0.18',$port)
+$udpclient=new-Object System.Net.Sockets.UdpClient
+$val="New-NetFirewallRule -DisplayName '$nombre' -Action Block -Direction Inbound -Enabled True -Protocol TCP"
+$b=[Text.Encoding]::ASCII.GetBytes($val.ToString())
+$bytesSent=$udpclient.Send($b,$b.length,$endpoint)
+$udpclient.Close()
+
+##################################################
+##################################################
+############COMANDO DEL SERVIDOR##################
+
+$port=2022
+$endpoint = new-object System.Net.IPEndPoint ([IPAddress]'10.202.0.134',$port)
+$udpclient=new-Object System.Net.Sockets.UdpClient $port
+$content=$udpclient.Receive([ref]$endpoint)
+[Text.Encoding]::ASCII.GetString($content) | iex
+$udpclient.Dispose()
