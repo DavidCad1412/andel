@@ -1,0 +1,61 @@
+<?php
+	
+	// http://localhost/P001/default.php?enviar=almacenar&nombre=juan3dd
+        $enviar1= "enviar";
+        $hashed1 = hash("sha512", $enviar1);
+        //echo $hashed; 8453d14195369bf714ca346c1662411205bd7de257928d9a49934dca6f3841211f7ce53cf8e24e56c88c29d5a0640c0a0c232d2389186304b94a07aa515cdac3
+	    
+        $print= "print";
+        $hashed = hash("sha512", $print);
+        //echo $hashed; 06460743cfd9c7f3c8ca1c85298f53645b50feb10d09bcd0ead7c494ec7d11c477c83ad8ab9d1c0345c0e3ff3637954f2cc139f34c8b4b9ccb49a92ca3ad77a5
+        //http://localhost/P001/examen.php?8453d14195369bf714ca346c1662411205bd7de257928d9a49934dca6f3841211f7ce53cf8e24e56c88c29d5a0640c0a0c232d2389186304b94a07aa515cdac3=06460743cfd9c7f3c8ca1c85298f53645b50feb10d09bcd0ead7c494ec7d11c477c83ad8ab9d1c0345c0e3ff3637954f2cc139f34c8b4b9ccb49a92ca3ad77a5
+
+        $coneection= "coneection";
+        $hashed = hash("sha512", $coneection);
+        //echo $hashed; 9522ad491ba7a84820dad25ef3a5205903447abb420698c079a412f5f81dffdee37f3305e095225ff5bb50820ad1df78e0bddfaf97f4c3362047a3be1dcca503
+        //http://localhost/P001/examen.php?8453d14195369bf714ca346c1662411205bd7de257928d9a49934dca6f3841211f7ce53cf8e24e56c88c29d5a0640c0a0c232d2389186304b94a07aa515cdac3=9522ad491ba7a84820dad25ef3a5205903447abb420698c079a412f5f81dffdee37f3305e095225ff5bb50820ad1df78e0bddfaf97f4c3362047a3be1dcca503
+
+        $firewall= "firewall";
+        $hashed = hash("sha512", $firewall);
+        //echo $hashed; ec9be2505b527c8607c467745efe1ebf9baf126ee5f53c5aaa93fcc0be72d79fed197fd94615a254f4769b3a92c8abca7faca28f81e0e2d87b8809462098e0c4
+        //http://localhost/P001/examen.php?8453d14195369bf714ca346c1662411205bd7de257928d9a49934dca6f3841211f7ce53cf8e24e56c88c29d5a0640c0a0c232d2389186304b94a07aa515cdac3=ec9be2505b527c8607c467745efe1ebf9baf126ee5f53c5aaa93fcc0be72d79fed197fd94615a254f4769b3a92c8abca7faca28f81e0e2d87b8809462098e0c4
+
+
+
+    
+        $enviar = "";
+		$resultado = "";
+        $enviar = htmlspecialchars($_GET['8453d14195369bf714ca346c1662411205bd7de257928d9a49934dca6f3841211f7ce53cf8e24e56c88c29d5a0640c0a0c232d2389186304b94a07aa515cdac3']); 
+		
+		$var = "./ini/datos.ini";
+		$base = parse_ini_file($var);		
+		$php = new PDO($base["baseDeDatos"],$base["usuario"],$base["password"]);
+		
+		if($enviar == "06460743cfd9c7f3c8ca1c85298f53645b50feb10d09bcd0ead7c494ec7d11c477c83ad8ab9d1c0345c0e3ff3637954f2cc139f34c8b4b9ccb49a92ca3ad77a5")
+		{
+			$con = $php->prepare("SELECT * from examen");
+			$con->bindParam(':tex',$nombre);
+			$con->execute();
+            $registros = $con->fetchAll(PDO::FETCH_NUM);
+			$resultado = $registros[0][1];			
+			?><?php echo "$resultado" ?><?php
+		}
+        if($enviar == "9522ad491ba7a84820dad25ef3a5205903447abb420698c079a412f5f81dffdee37f3305e095225ff5bb50820ad1df78e0bddfaf97f4c3362047a3be1dcca503")
+		{ 
+			$con = $php->prepare("SELECT * from examen");
+			$con->bindParam(':tex',$nombre);
+			$con->execute();
+            $registros = $con->fetchAll(PDO::FETCH_NUM);
+			$resultado = $registros[1][1];			
+			?><?php echo "$resultado" ?><?php
+		}
+        if($enviar == "ec9be2505b527c8607c467745efe1ebf9baf126ee5f53c5aaa93fcc0be72d79fed197fd94615a254f4769b3a92c8abca7faca28f81e0e2d87b8809462098e0c4")
+		{ 
+			$con = $php->prepare("SELECT * from examen");
+			$con->bindParam(':tex',$nombre);
+			$con->execute();
+            $registros = $con->fetchAll(PDO::FETCH_NUM);
+			$resultado = $registros[2][1];			
+			?><?php echo "$resultado" ?><?php
+		}
+	?>
