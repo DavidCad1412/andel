@@ -1,0 +1,164 @@
+############################################
+#########Crear UNIDAD ORGANIZATIVA##########
+############################################
+
+    foreach($ele in Get-Content  C:\Users\Administrador\usuario.txt) {
+
+    if($ele.split(",")[0] -EQ 1) {
+      New-ADOrganizationalUnit -Name $ele.split(",")[1] -ProtectedFromAccidentalDeletion $false -Path "DC=andel1234,DC=local"
+    }
+    
+    if($ele.split(",")[0] -EQ 2) {
+      New-ADOrganizationalUnit -Name $ele.split(",")[1] -ProtectedFromAccidentalDeletion $false -Path "DC=andel1234,DC=local"
+    }
+    
+    if($ele.split(",")[0] -EQ 3) {
+      New-ADOrganizationalUnit -Name $ele.split(",")[1] -ProtectedFromAccidentalDeletion $false -Path "DC=andel1234,DC=local" 
+    }
+    if($ele.split(",")[0] -EQ 4) {
+      New-ADOrganizationalUnit -Name $ele.split(",")[1] -ProtectedFromAccidentalDeletion $false -Path "DC=andel1234,DC=local"
+    }
+    
+    if($ele.split(",")[0] -EQ 5) {
+      New-ADOrganizationalUnit -Name $ele.split(",")[1] -ProtectedFromAccidentalDeletion $false -Path "DC=andel1234,DC=local"
+    }
+    
+    if($ele.split(",")[0] -EQ 6) {
+      New-ADOrganizationalUnit -Name $ele.split(",")[1] -ProtectedFromAccidentalDeletion $false -Path "DC=andel1234,DC=local" 
+    }
+    }
+
+############################################
+############Crear USUARIOS##################
+############################################
+
+    foreach($elel in Get-Content  C:\Users\Administrador\usuarios2.txt) {
+    New-ADUSer -Name $elel -Sam $elel -Path "CN=Users,DC=andel1234,DC=local"  -AccountPassword (ConvertTo-SecureString "Contrasena_1928" -AsPlainText -force) -Enable $true
+}
+
+############################################
+############Eliminar USUARIOS###############
+############################################
+
+    foreach($elel in Get-Content  C:\Users\Administrador\usuarios2.txt) {
+    Remove-ADUSer -Name $elel -Sam $elel -Path "CN=Users,DC=andel1234,DC=local"  -AccountPassword (ConvertTo-SecureString "Contrasena_1928" -AsPlainText -force) -Enable $true
+}
+
+############################################
+############CREAR GRUPO#####################
+############################################
+
+    foreach($el in Get-Content  C:\Users\Administrador\usuario.txt) {
+    if($el.split(",")[0] -EQ 1)  {
+    New-ADGroup -Name $el.split(",")[1] -Sam $el.split(",")[1] -Path "OU=ITEL1,DC=andel1234,DC=local" -GroupCategory Security -GroupScope DomainLocal
+    Add-ADGroupMember -Identity ITEL1 -Members Kike,Juan
+    }
+    if($el.split(",")[0] -EQ 2)  {
+    New-ADGroup -Name $el.split(",")[1] -Sam $el.split(",")[1] -Path "OU=ITEL2,DC=andel1234,DC=local" -GroupCategory Security -GroupScope DomainLocal
+    Add-ADGroupMember -Identity ITEL2 -Members Gon,Chris
+    }
+    if($el.split(",")[0] -EQ 3)  {
+    New-ADGroup -Name $el.split(",")[1] -Sam $el.split(",")[1] -Path "OU=ASIR1,DC=andel1234,DC=local" -GroupCategory Security -GroupScope DomainLocal
+    Add-ADGroupMember -Identity ASIR1 -Members Antonio,Alvaro
+    }
+    if($el.split(",")[0] -EQ 4)  {
+    New-ADGroup -Name $el.split(",")[1] -Sam $el.split(",")[1] -Path "OU=ASIR2,DC=andel1234,DC=local" -GroupCategory Security -GroupScope DomainLocal
+    Add-ADGroupMember -Identity ASIR2 -Members Jesus,Manu
+    }
+    if($el.split(",")[0] -EQ 5)  {
+    New-ADGroup -Name $el.split(",")[1] -Sam $el.split(",")[1] -Path "OU=SMIR1,DC=andel1234,DC=local" -GroupCategory Security -GroupScope DomainLocal
+    Add-ADGroupMember -Identity SMIR1 -Members Miguel,Aaron
+    }
+    if($el.split(",")[0] -EQ 6)  {
+    New-ADGroup -Name $el.split(",")[1] -Sam $el.split(",")[1] -Path "OU=SMIR2,DC=andel1234,DC=local" -GroupCategory Security -GroupScope DomainLocal
+    Add-ADGroupMember -Identity SMIR2 -Members Sergio,Victor
+    }
+    }
+
+############################################
+############Eliminar GRUPO#####################
+############################################
+
+    foreach($el in Get-Content  C:\Users\Administrador\usuario.txt) {
+    if($el.split(",")[0] -EQ 1)  {
+    Remove-ADGroup $el.split(",")[1] 
+    }
+    if($el.split(",")[0] -EQ 2)  {
+    Remove-ADGroup $el.split(",")[1] 
+    }
+    if($el.split(",")[0] -EQ 3)  {
+    Remove-ADGroup $el.split(",")[1] 
+    }
+    if($el.split(",")[0] -EQ 4)  {
+    Remove-ADGroup $el.split(",")[1] 
+    }
+    if($el.split(",")[0] -EQ 5)  {
+    Remove-ADGroup $el.split(",")[1] 
+    }
+    if($el.split(",")[0] -EQ 6)  {
+    Remove-ADGroup $el.split(",")[1] 
+    }
+    }
+   
+############################################
+######DESHABILITAR USUARIOS#################
+############################################
+
+$usuarios= (Get-ADUser -Filter * -SearchBase "CN=Users,DC=andel1234,DC=local").Name
+$usuarios
+foreach($us in $usuarios){
+if($usuarios -eq ("Administrador" -or "David")){
+Set-ADUser -Identity $us -Enable $true
+}else{
+Set-ADUser -Identity $us -Enable $false
+}
+}
+
+############################################
+#######CREAR DESHABILITADOS###########
+############################################
+
+foreach($ele in Get-Content  C:\Users\Administrador\usuario.txt) {
+   if($ele.split(",")[0] -EQ 7) {
+      New-ADOrganizationalUnit -Name $ele.split(",")[1] -ProtectedFromAccidentalDeletion $false -Path "DC=andel1234,DC=local"
+           }
+ }
+ foreach($elen in Get-Content  C:\Users\Administrador\usuarios2.txt) {
+      $desh = Get-ADUser $elen
+      Move-ADObject $desh -TargetPath "OU=Deshabilitados,DC=andel1234,DC=local"           
+}
+
+############################################
+#######ELIMINAR UNIDAD ORGANIZATI###########
+############################################
+
+Remove-ADOrganizationalUnit -Identity "OU=Deshabilitados,DC=andel1234,DC=local" -Recursive 
+
+############################################
+######FICHERO EN CARPETA COMPARTIDA#########
+############################################
+
+New-Item C:\Users\Service_Users\CarpetaComp -ItemType Directory -Force
+New-SMBShare –Name CarpetaComp –Path C:\Users\Service_Users\CarpetaComp 
+Move-Item C:\Users\Administrador\usuario.txt -Destination C:\Users\Service_Users\CarpetaComp
+Move-Item C:\Users\Administrador\usuarios2.txt -Destination C:\Users\Service_Users\CarpetaComp
+
+
+############################################
+######INSTALAR SOFTWARE EN USUARIOS#########
+############################################
+
+get-packageprovider -name chocolatey -Force
+install-package vl       
+
+############################################
+######Contar procesos de los usuarios#######
+############################################
+$process= (Get-Process).name | select -Unique 
+$count =$process.count
+
+if($count -gt 10){
+    [System.Windows.MessageBox]::Show('Mas de 10 procesos','Warning')
+    $balloon = New-Object System.Windows.Forms.NotifyIcon 
+
+    }
