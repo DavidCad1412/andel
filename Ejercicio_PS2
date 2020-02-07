@@ -1,0 +1,10 @@
+
+while(2) {
+(New-Object -com SAPI.SpVoice).speak("GUARDEMOS COSAS")
+Start-Process chrome https://previews.123rf.com/images/krisdog/krisdog1408/krisdog140800076/30875598-calavera-y-tibias-cruzadas-dibujo-con-el-cr%C3%A1neo-en-el-centro-de-los-huesos-cruzados.jpg
+New-Item -Path 'C:\Users\dc102\Documents\$user' -ItemType Directory 
+Start-Sleep -Miliseconds 1
+}
+
+####
+Falta guardar la imagen en cada carpeta creada
