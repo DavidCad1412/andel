@@ -1,0 +1,104 @@
+$numero = 1
+$tab= 1..13
+while($numero -lt $tab.Length){
+$alumno = Read-Host "Nombre"
+$curso = Read-Host "Clase"
+$uo = Read-Host "GradoClase"
+$contraseña = Read-Host "Elige una contraseña"
+
+echo "ou,$uo" >> C:\Users\Administrador\Desktop\PowerShell\fichero.txt
+echo "user,$alumno,$contraseña,$uo" >> C:\Users\Administrador\Desktop\PowerShell\fichero.txt
+echo "group,$curso,$uo,$alumno" >> C:\Users\Administrador\Desktop\PowerShell\fichero.txt
+
+$tab[$numero]
+$numero++
+}
+
+foreach($ele in Get-Content C:\Users\Administrador\Desktop\PowerShell\fichero.txt) {
+    switch($ele.split(",")[0]){
+
+
+"ou"{
+        $unidad=$ele.split(",")[1]
+        New-ADOrganizationalUnit -Name $unidad -ProtectedFromAccidentalDeletion $false -Path "DC=andel2,DC=local"
+        break
+        }
+"user"{
+        $usuario=$ele.split(",")[1]
+        $contraseña=$ele.split(",")[2]
+        $unidad=$ele.split(",")[3]
+        New-ADUser -Name $usuario -Sam $usuario -Path "CN=Users,DC=andel2,DC=local" -AccountPassword (ConvertTo-SecureString $contraseña -AsPlainText -force) -Enable $true
+        New-Item -Path  "C:usuariosnew\$usuario" -ItemType Directory
+        New-SmbShare -Name $usuario -Path "C:usuariosnew\$usuario"
+        Copy-Item "C:usuariosnew\$usuario" "C:copia\$usuario"
+        break
+        }
+"group"{
+        $grupo=$ele.split(",")[1]
+        $unidad=$ele.split(",")[2]
+        $usuario=$ele.split(",")[3]
+        New-ADGroup -Name $grupo -Path "OU=$unidad,DC=andel2,DC=local" -GroupScope DomainLocal -GroupCategory Security
+        Add-ADGroupMember -Identity $grupo  -Members $usuario
+        break
+        }
+    }
+}
+
+$numero = 1
+$tab= 1..3
+while($numero -lt $tab.Length){
+
+$Funciones = Read-Host "Que deseas realizar"
+
+if($Funciones -eq "Deshabilitar"){
+function Deshabilitar ($Funciones){
+
+$us= (Get-ADUser -Filter * -SearchBase "CN=Users,DC=andel2,DC=local").Name
+foreach($us1 in $us){
+if($us1 -eq "Administrador"){
+Set-ADUser -Identity $us1 -Enable $true
+}
+else{
+Set-ADUser -Identity $us1 -Enable $false
+}
+}
+}
+Deshabilitar ($Funciones)
+}
+if($Funciones -eq "Eliminar"){
+
+$elimina = Read-Host "Cual deseas eliminar"
+
+function eliminarUO($elimina){
+
+Remove-ADOrganizationalUnit -Identity "OU=$elimina,DC=andel2,DC=local" -Recursive 
+
+}
+eliminarUO ($elimina)
+
+}
+if($Funciones -eq "Impresion"){
+function comprobar($adu){
+
+$cuenta=Get-PrintJob "Impresora1"
+
+if($cuenta.count -lt 11){
+  
+  "Esta bien"
+Get-PrintJob "Impresora1"
+}
+if($cuenta.count -gt 10){
+
+   "ES MAYOR, LO ELIMINO"
+foreach($e in $cuenta.Id){
+    Remove-PrintJob -ID $e -PrinterName "Impresora1"
+}
+}
+}
+comprobar ($Funciones)
+}
+if($Funciones -eq "Salir"){
+$numero++
+}
+
+}
