@@ -1,0 +1,33 @@
+PHP
+<?php
+
+$imagen1 = file_get_contents('C:\Users\dc102\Desktop\EXAM\1.jpg');
+$imageData = base64_encode($imagen1);
+ 
+        $resultado = "";
+        $enviar = htmlspecialchars($_GET['enviar']); 
+		
+		$var = "./ini/datos.ini";
+		$base = parse_ini_file($var);		
+		$php = new PDO($base["baseDeDatos"],$base["usuario"],$base["password"]);
+		
+		if($enviar == "almacenar")
+		{
+			$con = $php->prepare("INSERT INTO encabezados VALUES (DEFAULT,:tex);");
+			$con->bindParam(':tex', $imageData);
+			$con->execute();
+			?><h1><?php echo "Imagen Almacenada" ?></h1><?php
+		}
+        if($enviar == "mostrar")
+		{ 
+			$con = $php->prepare("SELECT * from encabezados");
+			$con->bindParam(':tex',$nombre);
+			$con->execute();
+            $registros = $con->fetchAll(PDO::FETCH_NUM);
+            $n = count($registros)-1;
+            $numero = mt_rand(0,$n);
+			$imagen = $registros[$numero][1];
+            echo $imagen;
+            echo "<img src='data:image/jpg;base64,".$imagen."' />"; 
+        }
+?>
