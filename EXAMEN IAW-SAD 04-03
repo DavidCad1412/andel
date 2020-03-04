@@ -200,8 +200,10 @@ $balloon.ShowBalloonTip(5000)
 COMPARAR LAS IMAGENES SUBIDAS POR AMBOS USUARIOS DESDE PHP
 
 <?php 
+echo "Imagen Original<br>";
 $prueba1 = system(' powershell   (Invoke-WebRequest  http://localhost/P001/usuario1.php?enviar=mostrar).RawContentLength / 1Kb');
 echo "<hr>";
+echo "Imagen Dudosa<br>";
 $prueba2 = system(' powershell  (Invoke-WebRequest  http://localhost/P001/usuario2.php?enviar=mostrar).RawContentLength / 1Kb');
 echo "<hr>";
 ?>
