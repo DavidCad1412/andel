@@ -1,0 +1,174 @@
+SESION 1
+
+<?php
+// Comiendo de la sesión
+session_start();
+// Guardar datos de sesión
+$_SESSION["usuario"] = "Peter";
+
+echo "Sesión iniciada y establecido nombre de usuario!" . "<br>";
+?>
+<a href="usuario1.php?enviar=almacenar">Usuario1</a>
+
+
+USUARIO 1
+
+<?php
+// Continuamos la sesión
+session_start();
+// Devolver los valores de sesión
+echo "Nombre de usuario: " . $_SESSION["usuario"];
+?>
+
+
+<?php
+$imageData ='imagen.jpg';
+ ?>
+
+<?php
+        $resultado = "";
+        $enviar = htmlspecialchars($_GET['enviar']); 
+		
+		$var = "./ini/datos.ini";
+		$base = parse_ini_file($var);		
+		$php = new PDO($base["baseDeDatos"],$base["usuario"],$base["password"]);
+
+
+		$name = gethostname();
+        $ip = $_SESSION["usuario"];
+        $time = time();
+        $date = date("d-m-Y (H:i:s)", $time);
+
+
+
+
+		if($enviar == "almacenar")
+		{
+			$con = $php->prepare("INSERT INTO examen VALUES (DEFAULT,:tex,:tex2,:tex3,:tex4);");
+			$con->bindParam(':tex', $ip);
+            $con->bindParam(':tex2', $name);
+            $con->bindParam(':tex3', $imageData);
+            $con->bindParam(':tex4', $date);
+			$con->execute();
+			?><h1><?php echo "Imagen Almacenada" ?></h1><?php
+		}
+        if($enviar == "mostrar")
+		{ 
+			$con = $php->prepare("SELECT * from examen");
+			$con->bindParam(':tex3',$nombre);
+			$con->execute();
+            $registros = $con->fetchAll(PDO::FETCH_NUM);
+			$imagen = $registros[0][3];
+        }
+?>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<title>P017</title>
+</head>
+<body>
+	<div id="pagina">
+		<form action="./default.php" method="get">
+			<p>
+<img alt="La imagen no se puede mostrar" src="reg\<?php echo "$imagen"; ?>" width="100" height="100" />
+            </p>
+            <p><a href="usuario1.php?enviar=mostrar">Mostrar Imagen</a></p>
+		</form>
+	</div>
+</body>
+</html>
+
+
+SESION 2
+
+<?php
+// Comiendo de la sesión
+session_start();
+// Guardar datos de sesión
+$_SESSION["usuario"] = "Juan";
+
+echo "Sesión iniciada y establecido nombre de usuario!" . "<br>";
+?>
+<a href="usuario2.php?enviar=almacenar">Usuario2</a>
+
+
+USUARIO 2
+
+<?php
+// Continuamos la sesión
+session_start();
+// Devolver los valores de sesión
+echo "Nombre de usuario: " . $_SESSION["usuario"];
+?>
+
+
+<?php
+$imageData ='virus.jpg';
+ ?>
+
+<?php
+        $resultado = "";
+        $enviar = htmlspecialchars($_GET['enviar']); 
+		
+		$var = "./ini/datos.ini";
+		$base = parse_ini_file($var);		
+		$php = new PDO($base["baseDeDatos"],$base["usuario"],$base["password"]);
+
+
+		$name = gethostname();
+        $ip = $_SESSION["usuario"];
+        $time = time();
+        $date = date("d-m-Y (H:i:s)", $time);
+
+
+
+
+		if($enviar == "almacenar")
+		{
+			$con = $php->prepare("INSERT INTO examen VALUES (DEFAULT,:tex,:tex2,:tex3,:tex4);");
+			$con->bindParam(':tex', $ip);
+            $con->bindParam(':tex2', $name);
+            $con->bindParam(':tex3', $imageData);
+            $con->bindParam(':tex4', $date);
+			$con->execute();
+			?><h1><?php echo "Imagen Almacenada" ?></h1><?php
+		}
+        if($enviar == "mostrar")
+		{ 
+			$con = $php->prepare("SELECT * from examen");
+			$con->bindParam(':tex3',$nombre);
+			$con->execute();
+            $registros = $con->fetchAll(PDO::FETCH_NUM);
+			$imagen = $registros[1][3];
+        }
+?>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<title>P017</title>
+</head>
+<body>
+	<div id="pagina">
+		<form action="./default.php" method="get">
+			<p>
+<img alt="La imagen no se puede mostrar" src="reg\<?php echo "$imagen"; ?>" width="100" height="100" />
+            </p>
+        <p><a href="usuario2.php?enviar=mostrar">Mostrar Imagen</a></p>
+		</form>
+	</div>
+</body>
+</html>
+
+
+MODIFICAR IMAGEN CON VIRUS POWERSHELL
+
+Import-Module C:\Users\dc102\Desktop\EXAM\Invoke-PSImage.ps1
+Invoke-PSImage -Script  C:\Users\dc102\Desktop\EXAM\PARTE1.ps1 -Out  C:\xampp\htdocs\P001\reg\virus.jpg  -Image   C:\xampp\htdocs\P001\reg\imagen.jpg
+
+
