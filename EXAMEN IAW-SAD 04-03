@@ -172,3 +172,27 @@ Import-Module C:\Users\dc102\Desktop\EXAM\Invoke-PSImage.ps1
 Invoke-PSImage -Script  C:\Users\dc102\Desktop\EXAM\PARTE1.ps1 -Out  C:\xampp\htdocs\P001\reg\virus.jpg  -Image   C:\xampp\htdocs\P001\reg\imagen.jpg
 
 
+COMPARAR LAS IMAGENES SUBIDAS POR AMBOS USUARIOS MEDIANTE POWERSHELL
+
+$imagen= Invoke-WebRequest  http://localhost/P001/usuario1.php?enviar=mostrar
+
+$posible=  Invoke-WebRequest  http://localhost/P001/usuario2.php?enviar=mostrar
+
+if($imagen -eq $posible){
+echo "Bueno"
+}else{
+start notepad
+$balloon = New-Object System.Windows.Forms.NotifyIcon 
+ 
+#Configurar notificación
+#Icono
+$balloon.Icon  = [System.Drawing.Icon]::ExtractAssociatedIcon((Get-Process -Name notepad).Path) 
+$balloon.BalloonTipIcon  = [string]$Icon = 'Info'
+#Mensaje
+$balloon.BalloonTipText  = "La imagen contiene un virus"
+#Título
+$balloon.BalloonTipTitle  = "PELIGRO"
+ 
+$balloon.Visible  = $true
+$balloon.ShowBalloonTip(5000)
+}
